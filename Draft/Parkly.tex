@@ -1,0 +1,71 @@
+\documentclass[tikz,border=10pt]{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usetikzlibrary{arrows.meta,calc,shapes.geometric}
+
+% Attore stilizzato: \actor{nome}{posizione}{etichetta}
+% Crea una coordinata (nome) a cui collegare le associazioni.
+\newcommand{\actor}[3]{%
+  \begin{scope}[shift={(#2)},thick]
+    \draw (0,1.05) circle (0.2);
+    \draw (0,0.85) -- (0,0.2);
+    \draw (-0.4,0.7) -- (0.4,0.7);
+    \draw (0,0.2) -- (-0.3,-0.35);
+    \draw (0,0.2) -- (0.3,-0.35);
+    \node[below,align=center,font=\small\bfseries] at (0,-0.4) {#3};
+    \coordinate (#1) at (0,0.65);
+  \end{scope}}
+
+\begin{document}
+\begin{tikzpicture}[
+  uc/.style={draw,ellipse,minimum width=3.4cm,minimum height=1.2cm,
+             align=center,font=\small,inner sep=2pt},
+  assoc/.style={thin,-{Straight Barb[length=2mm]}},
+  rel/.style={thin,dashed,-{Triangle[open,length=3mm,width=3mm]}},
+  rlabel/.style={font=\scriptsize\itshape}
+]
+
+% --- Confine del sistema ---
+\draw[thick] (0.4,1.7) rectangle (12.4,-10.7);
+\node[font=\large\bfseries] at (6.4,1.2) {Parkly};
+
+% --- Casi d'uso: Automobilista ---
+\node[uc] (cerca)    at (2.8, 0)    {Cerca\\parcheggio};
+\node[uc] (confronta) at (2.8,-1.9) {Confronta\\parcheggio};
+\node[uc] (filtra)   at (2.8,-3.8)  {Filtra\\parcheggio};
+\node[uc] (disp)     at (2.8,-5.7)  {Visualizza\\disponibilità};
+\node[uc] (percorso) at (2.8,-7.6)  {Crea\\percorso};
+\node[uc] (dettagli) at (2.8,-9.5)  {Visualizza\\dettagli};
+
+% --- Casi d'uso: Gestore parcheggio ---
+\node[uc] (inserisci) at (10.2, 0)   {Inserisci\\parcheggio};
+\node[uc] (prezzi)    at (10.2,-1.9) {Aggiorna\\prezzi};
+\node[uc] (dispg)     at (10.2,-3.8) {Aggiorna\\disponibilità};
+\node[uc] (chiusura)  at (10.2,-5.7) {Segnala\\chiusura};
+
+% --- Casi d'uso: Ente comunale ---
+\node[uc] (tariffe)   at (10.2,-9.5) {Aggiorna\\tariffe};
+
+% --- Attori ---
+\actor{auto}{-1.7,-5.4}{Automobilista}
+\actor{gestore}{14.4,-3.5}{Gestore\\Parcheggio}
+\actor{ente}{14.4,-10.0}{Ente\\comunale}
+
+% --- Associazioni attore -- caso d'uso ---
+\foreach \u in {cerca,confronta,filtra,disp,percorso,dettagli}
+  \draw[assoc] (auto) -- (\u.west);
+\foreach \u in {inserisci,prezzi,dispg,chiusura}
+  \draw[assoc] (gestore) -- (\u.east);
+\draw[assoc] (ente) -- (tariffe.east);
+
+% --- <<extend>>: Confronta parcheggio estende Cerca parcheggio ---
+\draw[rel] (confronta.east) -- ++(1.0,0) |- (cerca.east);
+\node[rlabel,right] at ($(confronta.east)+(1.0,0.95)$) {\guillemotleft extend\guillemotright};
+
+% --- <<include>>: Inserisci parcheggio include prezzi e disponibilità ---
+\draw[rel] (inserisci.west) -- ++(-1.1,0) |- (prezzi.west);
+\draw[rel] (inserisci.west) -- ++(-1.1,0) |- (dispg.west);
+\node[rlabel,left] at ($(inserisci.west)+(-1.2,-2.85)$) {\guillemotleft include\guillemotright};
+
+\end{tikzpicture}
+\end{document}
