@@ -2,7 +2,7 @@
 
 # Titolo
 Parkly
-# Descrizione / Tagline
+# Descrizione
 Parkly – Trova il parcheggio migliore al prezzo migliore.
 App web che permette di trovare e confrontare i parcheggi di una zona, sia gratuiti che a pagamento, in base a prezzi e caratteristiche.
 # Problema che vuole risolvere
